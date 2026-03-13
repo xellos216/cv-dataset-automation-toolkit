@@ -1,0 +1,4 @@
+file_path,file_name,is_valid,error_reason,width,height,channels
+sample_dataset/images/test.txt,test.txt,False,Unsupported file extension,,,
+sample_dataset/images/test.png,test.png,False,Unreadable or corrupted image,,,
+sample_dataset/images/test.jpg,test.jpg,True,,500.0,477.0,3.0
