@@ -25,31 +25,36 @@
 ```
 cv-dataset-automation-toolkit
 │
-├── image_validator.py
-├── dataset_cleaner.py
-├── metadata_generator.py
-├── dataset_stats.py
+├─ src
+│  └─ cv_dataset_toolkit
+│     ├─ image_validator.py
+│     ├─ dataset_cleaner.py
+│     ├─ metadata_generator.py
+│     ├─ dataset_stats.py
+│     │
+│     └─ utils
+│        ├─ file_utils.py
+│        ├─ image_utils.py
+│        ├─ logging_utils.py
+│        └─ path_utils.py
 │
-├── utils
-│   ├── file_utils.py
-│   ├── image_utils.py
-│   ├── logging_utils.py
-│   └── path_utils.py
+├─ sample_dataset
+│  ├─ images
+│  └─ annotations
 │
-├── sample_dataset
-│   ├── images
-│   └── annotations
+├─ outputs
+│  ├─ logs
+│  ├─ reports
+│  ├─ metadata
+│  └─ stats
 │
-├── outputs
-│   ├── logs
-│   ├── reports
-│   ├── metadata
-│   └── stats
+├─ quarantine
+│  ├─ duplicates
+│  └─ invalid
 │
-├── quarantine
-│
-├── requirements.txt
-└── README.md
+├─ requirements.txt
+├─ README.md
+└─ README_EN.md
 ```
 
 ---
