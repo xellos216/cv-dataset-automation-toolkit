@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from utils.logging_utils import setup_logger
+from utils.path_utils import LOG_DIR, STATS_DIR, ensure_output_dirs
 
 
 def parse_args():
@@ -19,7 +20,7 @@ def parse_args():
     )
     parser.add_argument(
         "--output-dir",
-        default="stats_output",
+        default=str(STATS_DIR),
         help="Directory to save summary files and plots.",
     )
     parser.add_argument(
@@ -29,7 +30,7 @@ def parse_args():
     )
     parser.add_argument(
         "--log-file",
-        default="dataset_stats.log",
+        default=str(LOG_DIR / "dataset_stats.log"),
         help="Path to save the log file.",
     )
     return parser.parse_args()
@@ -134,11 +135,16 @@ def build_summary(df: pd.DataFrame) -> dict:
 
 def main():
     args = parse_args()
-    logger = setup_logger(name="dataset_stats", log_file=args.log_file)
+    ensure_output_dirs()
 
     input_csv = Path(args.input_csv)
     output_dir = Path(args.output_dir)
+    log_file_path = Path(args.log_file)
+
     ensure_output_dir(output_dir)
+    log_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger = setup_logger(name="dataset_stats", log_file=str(log_file_path))
 
     logger.info("Starting dataset statistics generation")
     logger.info(f"Input CSV: {input_csv}")
@@ -220,7 +226,7 @@ def main():
     print(f"Aspect ratio mean      : {summary['aspect_ratio']['mean']}")
     print(f"File size mean (bytes) : {summary['file_size_bytes']['mean']}")
     print(f"Summary JSON           : {summary_json_path}")
-    print(f"Log file               : {args.log_file}")
+    print(f"Log file               : {log_file_path}")
 
 
 if __name__ == "__main__":

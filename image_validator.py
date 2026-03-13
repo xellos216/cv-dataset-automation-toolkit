@@ -7,6 +7,7 @@ from tqdm import tqdm
 from utils.file_utils import collect_files, is_allowed_image_file
 from utils.image_utils import validate_image
 from utils.logging_utils import setup_logger
+from utils.path_utils import LOG_DIR, REPORT_DIR, ensure_output_dirs
 
 
 def parse_args():
@@ -37,12 +38,12 @@ def parse_args():
     )
     parser.add_argument(
         "--report",
-        default="validation_report.csv",
+        default=str(REPORT_DIR / "validation_report.csv"),
         help="Path to save the CSV validation report.",
     )
     parser.add_argument(
         "--log-file",
-        default="validation.log",
+        default=str(LOG_DIR / "validation.log"),
         help="Path to save the log file.",
     )
     return parser.parse_args()
@@ -50,7 +51,15 @@ def parse_args():
 
 def main():
     args = parse_args()
-    logger = setup_logger(log_file=args.log_file)
+    ensure_output_dirs()
+
+    report_path = Path(args.report)
+    log_file_path = Path(args.log_file)
+
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    log_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger = setup_logger(log_file=str(log_file_path))
 
     logger.info("Starting image validation")
     logger.info(f"Input directory: {args.input}")
@@ -66,11 +75,9 @@ def main():
     logger.info(f"Total files found: {len(files)}")
 
     results = []
-    non_image_files = 0
 
     for file_path in tqdm(files, desc="Validating files"):
         if not is_allowed_image_file(file_path):
-            non_image_files += 1
             results.append(
                 {
                     "file_path": str(file_path),
@@ -92,7 +99,7 @@ def main():
         results.append(validation_result)
 
     df = pd.DataFrame(results)
-    df.to_csv(args.report, index=False)
+    df.to_csv(report_path, index=False)
 
     valid_count = int(df["is_valid"].sum()) if not df.empty else 0
     invalid_count = len(df) - valid_count
@@ -123,7 +130,7 @@ def main():
     logger.info(f"Corrupted images: {corrupted_count}")
     logger.info(f"Low resolution images: {low_resolution_count}")
     logger.info(f"Unsupported files: {unsupported_count}")
-    logger.info(f"Report saved to: {Path(args.report).resolve()}")
+    logger.info(f"Report saved to: {report_path.resolve()}")
 
     print("\n=== Validation Summary ===")
     print(f"Total scanned files   : {len(files)}")
@@ -132,8 +139,8 @@ def main():
     print(f"Corrupted images      : {corrupted_count}")
     print(f"Low resolution images : {low_resolution_count}")
     print(f"Unsupported files     : {unsupported_count}")
-    print(f"CSV report            : {args.report}")
-    print(f"Log file              : {args.log_file}")
+    print(f"CSV report            : {report_path}")
+    print(f"Log file              : {log_file_path}")
 
 
 if __name__ == "__main__":

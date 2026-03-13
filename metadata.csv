@@ -1,2 +1,0 @@
-file_path,file_name,extension,width,height,channels,color_mode,file_size_bytes,aspect_ratio,is_readable,error_reason
-sample_dataset/images/test_copy.jpg,test_copy.jpg,.jpg,500,477,3,rgb_or_bgr,36287,1.0482,True,

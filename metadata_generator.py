@@ -8,6 +8,7 @@ from tqdm import tqdm
 from utils.file_utils import collect_files, is_allowed_image_file
 from utils.image_utils import extract_image_metadata
 from utils.logging_utils import setup_logger
+from utils.path_utils import LOG_DIR, METADATA_DIR, ensure_output_dirs
 
 
 def parse_args():
@@ -26,7 +27,7 @@ def parse_args():
     )
     parser.add_argument(
         "--output-csv",
-        default="metadata.csv",
+        default=str(METADATA_DIR / "metadata.csv"),
         help="Path to save metadata CSV.",
     )
     parser.add_argument(
@@ -41,7 +42,7 @@ def parse_args():
     )
     parser.add_argument(
         "--log-file",
-        default="metadata_generator.log",
+        default=str(LOG_DIR / "metadata_generator.log"),
         help="Path to save the log file.",
     )
     return parser.parse_args()
@@ -49,13 +50,24 @@ def parse_args():
 
 def main():
     args = parse_args()
-    logger = setup_logger(name="metadata_generator", log_file=args.log_file)
+    ensure_output_dirs()
+
+    output_csv_path = Path(args.output_csv)
+    output_json_path = Path(args.output_json) if args.output_json else None
+    log_file_path = Path(args.log_file)
+
+    output_csv_path.parent.mkdir(parents=True, exist_ok=True)
+    log_file_path.parent.mkdir(parents=True, exist_ok=True)
+    if output_json_path:
+        output_json_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger = setup_logger(name="metadata_generator", log_file=str(log_file_path))
 
     logger.info("Starting metadata generation")
     logger.info(f"Input directory: {args.input}")
     logger.info(f"Recursive scan: {args.recursive}")
-    logger.info(f"Output CSV: {args.output_csv}")
-    logger.info(f"Output JSON: {args.output_json}")
+    logger.info(f"Output CSV: {output_csv_path}")
+    logger.info(f"Output JSON: {output_json_path}")
 
     try:
         files = collect_files(args.input, recursive=args.recursive)
@@ -88,14 +100,14 @@ def main():
     if not df.empty:
         df = df.sort_values(by=["file_name"]).reset_index(drop=True)
 
-    df.to_csv(args.output_csv, index=False)
-    logger.info(f"Metadata CSV saved to: {Path(args.output_csv).resolve()}")
+    df.to_csv(output_csv_path, index=False)
+    logger.info(f"Metadata CSV saved to: {output_csv_path.resolve()}")
 
-    if args.output_json:
+    if output_json_path:
         records = df.to_dict(orient="records")
-        with open(args.output_json, "w", encoding="utf-8") as f:
+        with open(output_json_path, "w", encoding="utf-8") as f:
             json.dump(records, f, indent=2, ensure_ascii=False)
-        logger.info(f"Metadata JSON saved to: {Path(args.output_json).resolve()}")
+        logger.info(f"Metadata JSON saved to: {output_json_path.resolve()}")
 
     readable_count = (
         int(df["is_readable"].sum())
@@ -110,11 +122,11 @@ def main():
     print(f"Metadata rows written  : {len(df)}")
     print(f"Readable images        : {readable_count}")
     print(f"Unreadable images      : {unreadable_count}")
-    print(f"CSV output             : {args.output_csv}")
+    print(f"CSV output             : {output_csv_path}")
     print(
-        f"JSON output            : {args.output_json if args.output_json else 'Not requested'}"
+        f"JSON output            : {output_json_path if output_json_path else 'Not requested'}"
     )
-    print(f"Log file               : {args.log_file}")
+    print(f"Log file               : {log_file_path}")
 
 
 if __name__ == "__main__":
