@@ -1,0 +1,15 @@
+[
+  {
+    "file_path": "sample_dataset/images/test_copy.jpg",
+    "file_name": "test_copy.jpg",
+    "extension": ".jpg",
+    "width": 500,
+    "height": 477,
+    "channels": 3,
+    "color_mode": "rgb_or_bgr",
+    "file_size_bytes": 36287,
+    "aspect_ratio": 1.0482,
+    "is_readable": true,
+    "error_reason": ""
+  }
+]

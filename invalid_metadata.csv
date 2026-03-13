@@ -1,0 +1,2 @@
+file_path,file_name,extension,width,height,channels,color_mode,file_size_bytes,aspect_ratio,is_readable,error_reason
+quarantine/invalid/test.png,test.png,.png,,,,,,,False,Unreadable or corrupted image

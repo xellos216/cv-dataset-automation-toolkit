@@ -1,0 +1,15 @@
+[
+  {
+    "file_path": "quarantine/invalid/test.png",
+    "file_name": "test.png",
+    "extension": ".png",
+    "width": null,
+    "height": null,
+    "channels": null,
+    "color_mode": null,
+    "file_size_bytes": null,
+    "aspect_ratio": null,
+    "is_readable": false,
+    "error_reason": "Unreadable or corrupted image"
+  }
+]
