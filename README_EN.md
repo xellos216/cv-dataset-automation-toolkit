@@ -8,6 +8,12 @@ It demonstrates practical data engineering workflows commonly used in real-world
 
 ---
 
+## CLI Demo
+
+![CLI Demo](docs/1.gif)
+
+---
+
 # Key Features
 
 - Image dataset validation
